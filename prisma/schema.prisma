@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum DealStage {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL_SENT
+  NEGOTIATION
+  WON
+  LOST
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model Role {
+  id            String           @id @default(cuid())
+  name          String           @unique
+  description   String?
+  users         User[]
+  permissions   RolePermission[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model Permission {
+  id            String           @id @default(cuid())
+  name          String           @unique
+  description   String?
+  roles         RolePermission[]
+  createdAt     DateTime         @default(now())
+}
+
+model RolePermission {
+  id           String     @id @default(cuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String          @unique
+  password      String
+  roleId        String
+  role          Role            @relation(fields: [roleId], references: [id])
+  image         String?
+  isActive      Boolean         @default(true)
+  clients       Client[]        @relation("ClientConsultant")
+  managedClients Client[]       @relation("ClientManager")
+  deals         Deal[]
+  claims        Claim[]
+  queries       Query[]
+  activities    ActivityLog[]
+  notifications Notification[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Client {
+  id              String          @id @default(cuid())
+  name            String
+  company         String?
+  email           String?
+  phone           String?
+  consultantId    String?
+  consultant      User?           @relation("ClientConsultant", fields: [consultantId], references: [id])
+  managerId       String?
+  manager         User?           @relation("ClientManager", fields: [managerId], references: [id])
+  lifetimeRevenue Float           @default(0)
+  satisfactionScore Int           @default(0)
+  riskScore       Int             @default(0)
+  deals           Deal[]
+  claims          Claim[]
+  queries         Query[]
+  activities      ActivityLog[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Deal {
+  id              String          @id @default(cuid())
+  name            String
+  clientId        String
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  ownerId         String
+  owner           User            @relation(fields: [ownerId], references: [id])
+  value           Float           @default(0)
+  priority        Priority        @default(MEDIUM)
+  stage           DealStage       @default(NEW)
+  expectedCloseDate DateTime?
+  phoneNumber     String?
+  isWon           Boolean         @default(false)
+  isLost          Boolean         @default(false)
+  activities      ActivityLog[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Claim {
+  id              String          @id @default(cuid())
+  claimNumber     String          @unique
+  clientId        String
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  consultantId    String?
+  consultant      User?           @relation(fields: [consultantId], references: [id])
+  department      String?
+  priority        Priority        @default(MEDIUM)
+  status          Status          @default(OPEN)
+  slaDueDate      DateTime?
+  description     String?
+  attachments     String?
+  escalated       Boolean         @default(false)
+  activities      ActivityLog[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Query {
+  id              String          @id @default(cuid())
+  queryNumber     String          @unique
+  clientId        String
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  consultantId    String?
+  consultant      User?           @relation(fields: [consultantId], references: [id])
+  department      String?
+  priority        Priority        @default(MEDIUM)
+  status          Status          @default(OPEN)
+  slaDueDate      DateTime?
+  notes           String?
+  attachments     String?
+  escalated       Boolean         @default(false)
+  activities      ActivityLog[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  type      String
+  message   String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  clientId  String?
+  client    Client?  @relation(fields: [clientId], references: [id])
+  dealId    String?
+  deal      Deal?    @relation(fields: [dealId], references: [id])
+  claimId   String?
+  claim     Claim?   @relation(fields: [claimId], references: [id])
+  queryId   String?
+  query     Query?   @relation(fields: [queryId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+}
+
+model Counter {
+  id        String @id @default(cuid())
+  name      String @unique
+  value     Int    @default(1)
+}

@@ -1,0 +1,124 @@
+@import "tailwindcss";
+@import "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #f4f7fb;
+  --foreground: #1a1a2e;
+  --card: oklch(1 0 0);
+  --card-foreground: #1a1a2e;
+  --popover: oklch(1 0 0);
+  --popover-foreground: #1a1a2e;
+  --primary: #1a71b4;
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: #123d63;
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: #1a1a2e;
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #1a71b4;
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: #0f1729;
+  --foreground: oklch(0.985 0 0);
+  --card: #1a2332;
+  --card-foreground: oklch(0.985 0 0);
+  --popover: #1a2332;
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: #2d8bdb;
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: #1e4d7a;
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: #1e293b;
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: #1e293b;
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: #2d3748;
+  --input: #2d3748;
+  --ring: #2d8bdb;
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Glass morphism effects */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.dark .glass {
+  background: rgba(26, 35, 50, 0.8);
+  border-bottom: 1px solid rgba(45, 55, 72, 0.5);
+}
+
+/* Gradient sidebar */
+.sidebar-gradient {
+  background: linear-gradient(180deg, #1a71b4 0%, #123d63 50%, #0c2b47 100%);
+}
+
+/* Smooth hover transitions */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(26, 113, 180, 0.15);
+}
+
+/* Kanban scrollbar */
+.kanban-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.kanban-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.kanban-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dark .kanban-scroll::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+/* Status dot */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Dashboard glass card */
+.stat-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.dark .stat-card {
+  background: linear-gradient(135deg, rgba(26,35,50,0.9) 0%, rgba(26,35,50,0.7) 100%);
+  border: 1px solid rgba(45,55,72,0.3);
+}
