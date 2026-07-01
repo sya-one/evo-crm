@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: evo-mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: 1Hh@2h12026
+      MYSQL_DATABASE: evo_crm
+      MYSQL_USER: evo_user
+      MYSQL_PASSWORD: K.pbHn7^02)R
+
+    ports:
+      - "3306:3306"
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+    networks:
+      - evo-network
+
+    command: --default-authentication-plugin=mysql_native_password
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+
+  app:
+    build: .
+
+    container_name: evo-crm
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      DATABASE_URL: "mysql://evo_user:K.pbHn7^02)R@mysql:3306/evo_crm"
+      NEXTAUTH_SECRET: "3YvLqgP7nXc9KzR2fQ8uWm4A!sJ6eB#Tt9DvH@2LpX5NcR8"
+      NEXTAUTH_URL: "http://localhost:3000"
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - evo-network
+
+    command: >
+      sh -c "
+      npx prisma generate &&
+      npx prisma db push &&
+      node server.js
+      "
+
+volumes:
+  mysql-data:
+
+networks:
+  evo-network:
+    driver: bridge
