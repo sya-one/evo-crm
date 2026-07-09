@@ -154,66 +154,66 @@ async function main() {
   const hashedPassword = await bcrypt.hash("Admin@123456", 12);
 
   const admin = await prisma.user.upsert({
-    where: { email: "admin@evocrm.com" },
+    where: { email: "admin@evofs.co.za" },
     update: {},
     create: {
       name: "System Admin",
-      email: "admin@evocrm.com",
+      email: "admin@evofs.co.za",
       password: hashedPassword,
       roleId: superAdminRole!.id,
     },
   });
 
   const executive = await prisma.user.upsert({
-    where: { email: "executive@evocrm.com" },
+    where: { email: "executive@evofs.co.za" },
     update: {},
     create: {
       name: "James Mitchell",
-      email: "executive@evocrm.com",
+      email: "executive@evofs.co.za",
       password: hashedPassword,
       roleId: executiveRole!.id,
     },
   });
 
   const manager1 = await prisma.user.upsert({
-    where: { email: "manager@evocrm.com" },
+    where: { email: "manager@evofs.co.za" },
     update: {},
     create: {
       name: "Sarah Williams",
-      email: "manager@evocrm.com",
+      email: "manager@evofs.co.za",
       password: hashedPassword,
       roleId: managerRole!.id,
     },
   });
 
   const consultant1 = await prisma.user.upsert({
-    where: { email: "consultant1@evocrm.com" },
+    where: { email: "consultant1@evofs.co.za" },
     update: {},
     create: {
       name: "David Brown",
-      email: "consultant1@evocrm.com",
+      email: "consultant1@evofs.co.za",
       password: hashedPassword,
       roleId: consultantRole!.id,
     },
   });
 
   const consultant2 = await prisma.user.upsert({
-    where: { email: "consultant2@evocrm.com" },
+    where: { email: "consultant2@evofs.co.za" },
     update: {},
     create: {
       name: "Lisa Anderson",
-      email: "consultant2@evocrm.com",
+      email: "consultant2@evofs.co.za",
       password: hashedPassword,
       roleId: consultantRole!.id,
     },
   });
 
   const support = await prisma.user.upsert({
-    where: { email: "support@evocrm.com" },
+    where: { email: "support@evofs.co.za" },
     update: {},
     create: {
       name: "Mike Johnson",
-      email: "support@evocrm.com",
+      email: "support@evofs.co.za",
       password: hashedPassword,
       roleId: supportRole!.id,
     },
@@ -303,7 +303,8 @@ async function main() {
   ];
 
   for (const deal of dealData) {
-    await prisma.deal.create({ data: { ...deal, clientId: clients[deal.clientIdx].id } });
+    const { clientIdx, ...dealFields } = deal;
+    await prisma.deal.create({ data: { ...dealFields, clientId: clients[clientIdx].id } });
   }
 
   // Create Sample Claims
@@ -403,8 +404,8 @@ async function main() {
   });
 
   console.log("✅ Database seeded successfully!");
-  console.log("👤 Admin login: admin@evocrm.com / Admin@123456");
-  console.log("👤 Test users: executive@evocrm.com, manager@evocrm.com, consultant1@evocrm.com, support@evocrm.com");
+  console.log("👤 Admin login: admin@evofs.co.za / Admin@123456");
+  console.log("👤 Test users: executive@evofs.co.za, manager@evofs.co.za, consultant1@evofs.co.za, support@evofs.co.za");
   console.log("🔑 All passwords: Admin@123456");
 }
 

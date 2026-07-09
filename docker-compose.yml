@@ -1,67 +1,32 @@
-version: '3.8'
-
 services:
 
-  mysql:
-    image: mysql:8.0
-    container_name: evo-mysql
-    restart: unless-stopped
+  evo-crm:
+    image: node:22-alpine
+    container_name: evo-crm
 
-    environment:
-      MYSQL_ROOT_PASSWORD: 1Hh@2h12026
-      MYSQL_DATABASE: evo_crm
-      MYSQL_USER: evo_user
-      MYSQL_PASSWORD: K.pbHn7^02)R
-
-    ports:
-      - "3306:3306"
+    working_dir: /app
 
     volumes:
-      - mysql-data:/var/lib/mysql
+      - ./:/app
 
-    networks:
-      - evo-network
-
-    command: --default-authentication-plugin=mysql_native_password
-
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-
-  app:
-    build: .
-
-    container_name: evo-crm
-    restart: unless-stopped
+    command: sh -c "npm install && npm run dev"
 
     ports:
-      - "3000:3000"
+      - "3001:3000"
 
     environment:
-      DATABASE_URL: "mysql://evo_user:K.pbHn7^02)R@mysql:3306/evo_crm"
-      NEXTAUTH_SECRET: "3YvLqgP7nXc9KzR2fQ8uWm4A!sJ6eB#Tt9DvH@2LpX5NcR8"
-      NEXTAUTH_URL: "http://localhost:3000"
+      NODE_ENV: development
 
-    depends_on:
-      mysql:
-        condition: service_healthy
+      DATABASE_URL: mysql://crm_user:HorsemenCRM@2026!@evo-mysql:3306/evo_crm
+
+      NEXTAUTH_URL: http://localhost:3001
+      NEXTAUTH_SECRET: 3YvLqgP7nXc9KzR2fQ8uWm4A!sJ6eB#Tt9DvH@2LpX5NcR8
+
+    restart: unless-stopped
 
     networks:
       - evo-network
-
-    command: >
-      sh -c "
-      npx prisma generate &&
-      npx prisma db push &&
-      node server.js
-      "
-
-volumes:
-  mysql-data:
 
 networks:
   evo-network:
-    driver: bridge
+    external: true

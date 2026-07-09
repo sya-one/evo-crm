@@ -51,12 +51,12 @@ npm run dev
 
 | Role | Email | Password |
 |------|-------|----------|
-| Super Admin | admin@evocrm.com | Admin@123456 |
-| Executive | executive@evocrm.com | Admin@123456 |
-| Manager | manager@evocrm.com | Admin@123456 |
-| Consultant 1 | consultant1@evocrm.com | Admin@123456 |
-| Consultant 2 | consultant2@evocrm.com | Admin@123456 |
-| Support Agent | support@evocrm.com | Admin@123456 |
+| Super Admin | admin@evofs.co.za | Admin@123456 |
+| Executive | executive@evofs.co.za | Admin@123456 |
+| Manager | manager@evofs.co.za | Admin@123456 |
+| Consultant 1 | consultant1@evofs.co.za | Admin@123456 |
+| Consultant 2 | consultant2@evofs.co.za | Admin@123456 |
+| Support Agent | support@evofs.co.za | Admin@123456 |
 
 ## Features
 
