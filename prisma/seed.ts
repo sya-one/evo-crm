@@ -340,7 +340,7 @@ async function main() {
         priority: [Priority.LOW, Priority.MEDIUM, Priority.HIGH, Priority.CRITICAL][i % 4],
         status: claimStatuses[i % 4],
         slaDueDate: new Date(2026, 6, 5 + i),
-        notes: `Query about ${departments[i % departments.length]} from ${clients[clientIdx].name}`,
+        description: `Query about ${departments[i % departments.length]} from ${clients[clientIdx].name}`,
         escalated: i > 5,
       },
     });
