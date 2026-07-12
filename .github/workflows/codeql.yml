@@ -1,0 +1,64 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "release/**"
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+  schedule:
+    # Every Sunday at 02:00 UTC
+    - cron: '0 2 * * 0'
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language:
+          - javascript-typescript
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build Application
+        run: npm run build
+        env:
+          DATABASE_URL: "mysql://user:password@localhost:3306/safron_crm"
+          NEXTAUTH_SECRET: "codeql-build-secret"
+          NEXTAUTH_URL: "http://localhost:3000"
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3

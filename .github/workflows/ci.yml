@@ -1,0 +1,70 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+      - "bugfix/**"
+      - "hotfix/**"
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & Verify
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Check Formatting
+        run: npm run format:check
+        continue-on-error: true
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type Check
+        run: npm run type-check
+
+      - name: Build Application
+        run: npm run build
+        env:
+          DATABASE_URL: mysql://user:password@localhost:3306/safron_crm
+          NEXTAUTH_SECRET: github-actions-secret
+          NEXTAUTH_URL: http://localhost:3000
+          NODE_ENV: production
+
+      - name: Upload Build Artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: safron-crm-build-node-${{ matrix.node-version }}
+          path: .next
+          retention-days: 7
